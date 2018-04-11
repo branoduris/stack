@@ -198,11 +198,13 @@ EOF
 module "alb" {
   source                        = "terraform-aws-modules/alb/aws"
   load_balancer_name            = "${module.task.name}-${random_string.suffix.result}"
-  security_groups               = ["${var.security_groups}"]
+
+  subnets                   = ["${split(",", var.subnet_ids)}"]
+  security_groups           = ["${split(",",var.security_groups)}"]
+
   // log_enable                    = false
   log_bucket_name               = "${var.log_bucket}"
   // log_location_prefix           = "my-alb-logs"
-  subnets                       = "${var.subnet_ids}"
   
   vpc_id                        = "${var.vpc_id}"
   // https_listeners               = "${list(map("certificate_arn", "arn:aws:iam::123456789012:server-certificate/test_cert-123456789012", "port", 443))}"
