@@ -168,7 +168,7 @@ resource "aws_ecs_service" "main" {
     create_before_destroy = true
   }
 
-  depends_on = ["module.target_group_arns"]
+  depends_on = ["module.alb.target_group_arns"]
 }
 
 module "task" {
@@ -199,8 +199,8 @@ module "alb" {
   source                        = "terraform-aws-modules/alb/aws"
   load_balancer_name            = "${module.task.name}-${random_string.suffix.result}"
   security_groups               = "${var.security_groups}"
-  log_enable                    = false
-  // log_bucket_name               = "logs-us-east-2-123456789012"
+  // log_enable                    = false
+  log_bucket_name               = "${var.log_bucket}"
   // log_location_prefix           = "my-alb-logs"
   subnets                       = "${var.subnet_ids}"
   
@@ -243,7 +243,7 @@ resource "aws_route53_record" "external" {
 
   alias {
     zone_id                = "${module.alb.load_balancer_zone_id}"
-    name                   = "${module.alb.dns}"
+    name                   = "${module.alb.dns_name}"
     evaluate_target_health = false
   }
 }
@@ -255,7 +255,7 @@ resource "aws_route53_record" "internal" {
 
   alias {
     zone_id                = "${module.alb.load_balancer_zone_id}"
-    name                   = "${module.alb.dns}"
+    name                   = "${module.alb.dns_name}"
     evaluate_target_health = false
   }
 }
@@ -271,7 +271,7 @@ output "name" {
 
 // The DNS name of the ELB
 output "dns" {
-  value = "${module.alb.dns}"
+  value = "${module.alb.dns_name}"
 }
 
 // The id of the ELB
