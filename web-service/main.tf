@@ -198,7 +198,7 @@ EOF
 module "alb" {
   source                        = "terraform-aws-modules/alb/aws"
   load_balancer_name            = "${module.task.name}-${random_string.suffix.result}"
-  security_groups               = "${var.security_groups}"
+  security_groups               = ["${var.security_groups}"]
   // log_enable                    = false
   log_bucket_name               = "${var.log_bucket}"
   // log_location_prefix           = "my-alb-logs"
