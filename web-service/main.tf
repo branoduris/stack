@@ -168,7 +168,7 @@ resource "aws_ecs_service" "main" {
     create_before_destroy = true
   }
 
-  depends_on = ["module.alb.target_group_arns"]
+  // depends_on = ["module.alb.target_group_arns"]
 }
 
 module "task" {
