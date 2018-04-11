@@ -17,6 +17,10 @@
  * Required Variables.
  */
 
+variable "vpc_id" {
+  description = "VPC ID"
+}
+
 variable "environment" {
   description = "Environment tag, e.g prod"
 }
@@ -130,6 +134,16 @@ variable "deployment_maximum_percent" {
   default     = 200
 }
 
+provider "random" {
+  version = "= 1.1.0"
+}
+
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+}
+
+
 /**
  * Resources.
  */
@@ -144,7 +158,8 @@ resource "aws_ecs_service" "main" {
   deployment_maximum_percent         = "${var.deployment_maximum_percent}"
 
   load_balancer {
-    elb_name       = "${module.elb.id}"
+    // elb_name       = "${module.elb.id}"
+    target_group_arn = "${module.alb.target_group_arns[0]}"
     container_name = "${module.task.name}"
     container_port = "${var.container_port}"
   }
@@ -152,6 +167,8 @@ resource "aws_ecs_service" "main" {
   lifecycle {
     create_before_destroy = true
   }
+
+  depends_on = ["module.target_group_arns"]
 }
 
 module "task" {
@@ -175,21 +192,72 @@ module "task" {
 EOF
 }
 
-module "elb" {
-  source = "./elb"
 
-  name               = "${module.task.name}"
-  port               = "${var.port}"
-  environment        = "${var.environment}"
-  subnet_ids         = "${var.subnet_ids}"
-  external_dns_name  = "${coalesce(var.external_dns_name, module.task.name)}"
-  internal_dns_name  = "${coalesce(var.internal_dns_name, module.task.name)}"
-  healthcheck        = "${var.healthcheck}"
-  external_zone_id   = "${var.external_zone_id}"
-  internal_zone_id   = "${var.internal_zone_id}"
-  security_groups    = "${var.security_groups}"
-  log_bucket         = "${var.log_bucket}"
-  ssl_certificate_id = "${var.ssl_certificate_id}"
+
+
+module "alb" {
+  source                        = "terraform-aws-modules/alb/aws"
+  load_balancer_name            = "${module.task.name}-${random_string.suffix.result}"
+  security_groups               = "${var.security_groups}"
+  log_enable                    = false
+  // log_bucket_name               = "logs-us-east-2-123456789012"
+  // log_location_prefix           = "my-alb-logs"
+  subnets                       = "${var.subnet_ids}"
+  
+  vpc_id                        = "${var.vpc_id}"
+  // https_listeners               = "${list(map("certificate_arn", "arn:aws:iam::123456789012:server-certificate/test_cert-123456789012", "port", 443))}"
+  // https_listeners_count         = "1"
+  http_tcp_listeners            = "${list(map("port", "80", "protocol", "HTTP"))}"
+  http_tcp_listeners_count      = "1"
+  target_groups                 = "${list(map("name", "foo", "backend_protocol", "HTTP", "backend_port", "80"))}"
+  target_groups_count           = "1"
+
+  tags {
+    Name        = "${module.task.name}"
+    Environment = "${var.environment}"
+  }
+}
+
+// module "elb" {
+//   source = "./elb"
+
+//   name               = "${module.task.name}"
+//   port               = "${var.port}"
+//   environment        = "${var.environment}"
+//   subnet_ids         = "${var.subnet_ids}"
+//   external_dns_name  = "${coalesce(var.external_dns_name, module.task.name)}"
+//   internal_dns_name  = "${coalesce(var.internal_dns_name, module.task.name)}"
+//   healthcheck        = "${var.healthcheck}"
+//   external_zone_id   = "${var.external_zone_id}"
+//   internal_zone_id   = "${var.internal_zone_id}"
+//   security_groups    = "${var.security_groups}"
+//   log_bucket         = "${var.log_bucket}"
+//   ssl_certificate_id = "${var.ssl_certificate_id}"
+// }
+
+
+resource "aws_route53_record" "external" {
+  zone_id = "${var.external_zone_id}"
+  name    = "${var.external_dns_name}"
+  type    = "A"
+
+  alias {
+    zone_id                = "${module.alb.load_balancer_zone_id}"
+    name                   = "${module.alb.dns}"
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "internal" {
+  zone_id = "${var.internal_zone_id}"
+  name    = "${var.internal_dns_name}"
+  type    = "A"
+
+  alias {
+    zone_id                = "${module.alb.load_balancer_zone_id}"
+    name                   = "${module.alb.dns}"
+    evaluate_target_health = false
+  }
 }
 
 /**
@@ -198,30 +266,30 @@ module "elb" {
 
 // The name of the ELB
 output "name" {
-  value = "${module.elb.name}"
+  value = "${module.task.name}-${random_string.suffix.result}"
 }
 
 // The DNS name of the ELB
 output "dns" {
-  value = "${module.elb.dns}"
+  value = "${module.alb.dns}"
 }
 
 // The id of the ELB
 output "elb" {
-  value = "${module.elb.id}"
+  value = "${module.alb.load_balancer_id}"
 }
 
 // The zone id of the ELB
 output "zone_id" {
-  value = "${module.elb.zone_id}"
+  value = "${module.alb.load_balancer_zone_id}"
 }
 
 // FQDN built using the zone domain and name (external)
 output "external_fqdn" {
-  value = "${module.elb.external_fqdn}"
+  value = "${aws_route53_record.external.fqdn}"
 }
 
 // FQDN built using the zone domain and name (internal)
 output "internal_fqdn" {
-  value = "${module.elb.internal_fqdn}"
+  value = "${aws_route53_record.internal.fqdn}"
 }
