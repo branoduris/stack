@@ -211,7 +211,7 @@ module "alb" {
   // https_listeners_count         = "1"
   http_tcp_listeners            = "${list(map("port", "80", "protocol", "HTTP"))}"
   http_tcp_listeners_count      = "1"
-  target_groups                 = "${list(map("name", "foo", "backend_protocol", "HTTP", "backend_port", "80"))}"
+  target_groups                 = "${list(map("name", "${module.task.name}-tg", "backend_protocol", "HTTP", "backend_port", "80"))}"
   target_groups_count           = "1"
 
   tags {

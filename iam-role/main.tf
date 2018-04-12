@@ -39,11 +39,13 @@ resource "aws_iam_role_policy" "default_ecs_service_role_policy" {
     {
       "Effect": "Allow",
       "Action": [
-        "ec2:AuthorizeSecurityGroupIngress",
         "ec2:Describe*",
+        "ec2:AuthorizeSecurityGroupIngress",
         "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+        "elasticloadbalancing:DeregisterTargets",
         "elasticloadbalancing:Describe*",
-        "elasticloadbalancing:RegisterInstancesWithLoadBalancer"
+        "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+        "elasticloadbalancing:RegisterTargets"
       ],
       "Resource": "*"
     }
