@@ -2,6 +2,10 @@ variable "name" {
   description = "RDS instance name"
 }
 
+variable "identifier" {
+  description = "DBName"
+}
+
 variable "engine" {
   description = "Database engine: mysql, postgres, etc."
   default     = "postgres"
@@ -145,7 +149,7 @@ resource "aws_db_subnet_group" "main" {
 }
 
 resource "aws_db_instance" "main" {
-  identifier = "${var.name}"
+  identifier = "${var.identifier}"
 
   # Database
   engine         = "${var.engine}"
