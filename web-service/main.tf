@@ -151,7 +151,8 @@ resource "random_string" "suffix" {
 resource "aws_ecs_service" "main" {
   name                               = "${module.task.name}"
   cluster                            = "${var.cluster}"
-  task_definition                    = "${module.task.arn}"
+  task_definition = "${module.task.name}:${max("${module.task.revision}", "${data.aws_ecs_task_definition.task.revision}")}"
+  // task_definition                    = "${module.task.arn}"
   desired_count                      = "${var.desired_count}"
   iam_role                           = "${var.iam_role}"
   deployment_minimum_healthy_percent = "${var.deployment_minimum_healthy_percent}"
@@ -169,6 +170,10 @@ resource "aws_ecs_service" "main" {
   }
 
   // depends_on = ["module.alb.target_group_arns"]
+}
+
+data "aws_ecs_task_definition" "task" {
+  task_definition = "${module.task.name}"
 }
 
 module "task" {
