@@ -2,6 +2,10 @@ variable "name" {
   description = "RDS instance name"
 }
 
+variable "environment" {
+  description = "The environment tag, e.g prod"
+}
+
 variable "engine" {
   description = "Database engine: mysql, postgres, etc."
   default     = "postgres"
@@ -135,6 +139,7 @@ resource "aws_security_group" "main" {
 
   tags {
     Name = "RDS (${var.name})"
+    Environment = "${var.environment}"
   }
 }
 
@@ -173,6 +178,11 @@ resource "aws_db_instance" "main" {
   db_subnet_group_name   = "${aws_db_subnet_group.main.id}"
   vpc_security_group_ids = ["${aws_security_group.main.id}"]
   publicly_accessible    = "${var.publicly_accessible}"
+
+  tags {
+    Name = "RDS (${var.name})"
+    Environment = "${var.environment}"
+  }
 }
 
 output "addr" {
