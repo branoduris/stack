@@ -39,7 +39,9 @@ variable "env_vars" {
 
 variable "command" {
   description = "The raw json of the task command"
-  default     = "[]"
+  default     = []
+  // default     = "[]"
+  type = "list"
 } # ["--key=foo","--port=bar"]
 
 variable "entry_point" {
@@ -93,7 +95,7 @@ resource "aws_ecs_task_definition" "main" {
     "cpu": ${var.cpu},
     "environment": ${var.env_vars},
     "essential": true,
-    "command": ${var.command},
+    "command" = ${jsonencode(var.command)}
     "image": "${var.image}:${var.image_version}",
     "memory": ${var.memory},
     "name": "${var.name}",
