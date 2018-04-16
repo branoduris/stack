@@ -180,7 +180,7 @@ resource "aws_db_instance" "main" {
   publicly_accessible    = "${var.publicly_accessible}"
 
   tags {
-    Name = "RDS (${var.name})"
+    Name = "${var.name}"
     Environment = "${var.environment}"
   }
 }
