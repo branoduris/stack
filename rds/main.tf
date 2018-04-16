@@ -2,10 +2,6 @@ variable "name" {
   description = "RDS instance name"
 }
 
-variable "identifier" {
-  description = "DBName"
-}
-
 variable "engine" {
   description = "Database engine: mysql, postgres, etc."
   default     = "postgres"
@@ -100,11 +96,11 @@ variable "ingress_allow_security_groups" {
   default     = []
 }
 
-variable "ingress_allow_cidr_blocks" {
-  description = "A list of CIDR blocks to allow traffic from"
-  type        = "list"
-  default     = []
-}
+// variable "ingress_allow_cidr_blocks" {
+//   description = "A list of CIDR blocks to allow traffic from"
+//   type        = "list"
+//   default     = []
+// }
 
 variable "subnet_ids" {
   description = "A list of subnet IDs"
@@ -123,12 +119,12 @@ resource "aws_security_group" "main" {
     security_groups = ["${var.ingress_allow_security_groups}"]
   }
 
-  ingress {
-    from_port   = "${var.port}"
-    to_port     = "${var.port}"
-    protocol    = "TCP"
-    cidr_blocks = ["${var.ingress_allow_cidr_blocks}"]
-  }
+  // ingress {
+  //   from_port   = "${var.port}"
+  //   to_port     = "${var.port}"
+  //   protocol    = "TCP"
+  //   cidr_blocks = ["${var.ingress_allow_cidr_blocks}"]
+  // }
 
   egress {
     from_port   = 0
@@ -149,7 +145,7 @@ resource "aws_db_subnet_group" "main" {
 }
 
 resource "aws_db_instance" "main" {
-  identifier = "${var.identifier}"
+  identifier     = "${var.name}"
 
   # Database
   engine         = "${var.engine}"
