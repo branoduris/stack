@@ -192,7 +192,7 @@ module "task" {
   [
     {
       "containerPort": ${var.container_port},
-      "hostPort": 0
+      "hostPort": ${var.port}
     }
   ]
 EOF
