@@ -143,14 +143,14 @@ variable "deployment_maximum_percent" {
   default     = 200
 }
 
-// provider "random" {
-//   version = "= 1.1.0"
-// }
+provider "random" {
+  version = "= 1.1.0"
+}
 
-// resource "random_string" "suffix" {
-//   length  = 8
-//   special = false
-// }
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+}
 
 
 
