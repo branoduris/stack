@@ -286,7 +286,7 @@ EOF
 
 // The name of the ELB
 output "name" {
-  value = "${module.task.name}-${random_string.suffix.result}"
+  value = "${module.task.name}"
 }
 
 // // The DNS name of the ELB
