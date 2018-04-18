@@ -94,6 +94,10 @@ variable "healthcheck" {
   default     = "/"
 }
 
+variable "health_check_grace_period" {
+  default     = 0
+}
+
 variable "container_port" {
   description = "The container port"
   default     = 3000
@@ -158,6 +162,8 @@ resource "aws_ecs_service" "main" {
   iam_role                           = "${var.iam_role}"
   deployment_minimum_healthy_percent = "${var.deployment_minimum_healthy_percent}"
   deployment_maximum_percent         = "${var.deployment_maximum_percent}"
+
+  health_check_grace_period_seconds = "${var.health_check_grace_period}"
 
   load_balancer {
     // elb_name       = "${module.elb.id}"
