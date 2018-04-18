@@ -17,13 +17,13 @@
  * Required Variables.
  */
 
-variable "vpc_id" {
-  description = "VPC ID"
-}
+// variable "vpc_id" {
+//   description = "VPC ID"
+// }
 
-variable "environment" {
-  description = "Environment tag, e.g prod"
-}
+// variable "environment" {
+//   description = "Environment tag, e.g prod"
+// }
 
 variable "image" {
   description = "The docker image name, e.g nginx"
@@ -39,13 +39,13 @@ variable "version" {
   default     = "latest"
 }
 
-variable "subnet_ids" {
-  description = "Comma separated list of subnet IDs that will be passed to the ELB module"
-}
+// variable "subnet_ids" {
+//   description = "Comma separated list of subnet IDs that will be passed to the ELB module"
+// }
 
-variable "security_groups" {
-  description = "Comma separated list of security group IDs that will be passed to the ELB module"
-}
+// variable "security_groups" {
+//   description = "Comma separated list of security group IDs that will be passed to the ELB module"
+// }
 
 variable "port" {
   description = "The container host port"
@@ -55,35 +55,39 @@ variable "cluster" {
   description = "The cluster name or ARN"
 }
 
-variable "log_bucket" {
-  description = "The S3 bucket ID to use for the ELB"
+variable "target_group_arn" {
+  
 }
 
-variable "ssl_certificate_id" {
-  description = "SSL Certificate ID to use"
-}
+// variable "log_bucket" {
+//   description = "The S3 bucket ID to use for the ELB"
+// }
+
+// variable "ssl_certificate_id" {
+//   description = "SSL Certificate ID to use"
+// }
 
 variable "iam_role" {
   description = "IAM Role ARN to use"
 }
 
-variable "external_dns_name" {
-  description = "The subdomain under which the ELB is exposed externally, defaults to the task name"
-  default     = ""
-}
+// variable "external_dns_name" {
+//   description = "The subdomain under which the ELB is exposed externally, defaults to the task name"
+//   default     = ""
+// }
 
-variable "internal_dns_name" {
-  description = "The subdomain under which the ELB is exposed internally, defaults to the task name"
-  default     = ""
-}
+// variable "internal_dns_name" {
+//   description = "The subdomain under which the ELB is exposed internally, defaults to the task name"
+//   default     = ""
+// }
 
-variable "external_zone_id" {
-  description = "The zone ID to create the record in"
-}
+// variable "external_zone_id" {
+//   description = "The zone ID to create the record in"
+// }
 
-variable "internal_zone_id" {
-  description = "The zone ID to create the record in"
-}
+// variable "internal_zone_id" {
+//   description = "The zone ID to create the record in"
+// }
 
 /**
  * Options.
@@ -139,14 +143,16 @@ variable "deployment_maximum_percent" {
   default     = 200
 }
 
-provider "random" {
-  version = "= 1.1.0"
-}
+// provider "random" {
+//   version = "= 1.1.0"
+// }
 
-resource "random_string" "suffix" {
-  length  = 8
-  special = false
-}
+// resource "random_string" "suffix" {
+//   length  = 8
+//   special = false
+// }
+
+
 
 
 /**
@@ -167,7 +173,7 @@ resource "aws_ecs_service" "main" {
 
   load_balancer {
     // elb_name       = "${module.elb.id}"
-    target_group_arn = "${module.alb.target_group_arns[0]}"
+    target_group_arn = "${var.target_group_arn}"
     container_name = "${module.task.name}"
     container_port = "${var.container_port}"
   }
@@ -207,30 +213,30 @@ EOF
 
 
 
-module "alb" {
-  source                        = "terraform-aws-modules/alb/aws"
-  load_balancer_name            = "${module.task.name}-${random_string.suffix.result}"
+// module "alb" {
+//   source                        = "terraform-aws-modules/alb/aws"
+//   load_balancer_name            = "${module.task.name}-${random_string.suffix.result}"
 
-  subnets                       = ["${split(",", var.subnet_ids)}"]
-  security_groups               = ["${split(",",var.security_groups)}"]
+//   subnets                       = ["${split(",", var.subnet_ids)}"]
+//   security_groups               = ["${split(",",var.security_groups)}"]
 
-  // log_enable                    = false
-  log_bucket_name               = "${var.log_bucket}"
-  // log_location_prefix           = "my-alb-logs"
+//   // log_enable                    = false
+//   log_bucket_name               = "${var.log_bucket}"
+//   // log_location_prefix           = "my-alb-logs"
   
-  vpc_id                        = "${var.vpc_id}"
-  // https_listeners               = "${list(map("certificate_arn", "arn:aws:iam::123456789012:server-certificate/test_cert-123456789012", "port", 443))}"
-  // https_listeners_count         = "1"
-  http_tcp_listeners            = "${list(map("port", "80", "protocol", "HTTP"))}"
-  http_tcp_listeners_count      = "1"
-  target_groups                 = "${list(map("name", "${module.task.name}-tg", "backend_protocol", "HTTP", "backend_port", "80"))}"
-  target_groups_count           = "1"
+//   vpc_id                        = "${var.vpc_id}"
+//   // https_listeners               = "${list(map("certificate_arn", "arn:aws:iam::123456789012:server-certificate/test_cert-123456789012", "port", 443))}"
+//   // https_listeners_count         = "1"
+//   http_tcp_listeners            = "${list(map("port", "80", "protocol", "HTTP"))}"
+//   http_tcp_listeners_count      = "1"
+//   target_groups                 = "${list(map("name", "${module.task.name}-tg", "backend_protocol", "HTTP", "backend_port", "80"))}"
+//   target_groups_count           = "1"
 
-  tags {
-    Name        = "${module.task.name}"
-    Environment = "${var.environment}"
-  }
-}
+//   tags {
+//     Name        = "${module.task.name}"
+//     Environment = "${var.environment}"
+//   }
+// }
 
 // module "elb" {
 //   source = "./elb"
@@ -250,29 +256,29 @@ module "alb" {
 // }
 
 
-resource "aws_route53_record" "external" {
-  zone_id = "${var.external_zone_id}"
-  name    = "${var.external_dns_name}"
-  type    = "A"
+// resource "aws_route53_record" "external" {
+//   zone_id = "${var.external_zone_id}"
+//   name    = "${var.external_dns_name}"
+//   type    = "A"
 
-  alias {
-    zone_id                = "${module.alb.load_balancer_zone_id}"
-    name                   = "${module.alb.dns_name}"
-    evaluate_target_health = false
-  }
-}
+//   alias {
+//     zone_id                = "${module.alb.load_balancer_zone_id}"
+//     name                   = "${module.alb.dns_name}"
+//     evaluate_target_health = false
+//   }
+// }
 
-resource "aws_route53_record" "internal" {
-  zone_id = "${var.internal_zone_id}"
-  name    = "${var.internal_dns_name}"
-  type    = "A"
+// resource "aws_route53_record" "internal" {
+//   zone_id = "${var.internal_zone_id}"
+//   name    = "${var.internal_dns_name}"
+//   type    = "A"
 
-  alias {
-    zone_id                = "${module.alb.load_balancer_zone_id}"
-    name                   = "${module.alb.dns_name}"
-    evaluate_target_health = false
-  }
-}
+//   alias {
+//     zone_id                = "${module.alb.load_balancer_zone_id}"
+//     name                   = "${module.alb.dns_name}"
+//     evaluate_target_health = false
+//   }
+// }
 
 /**
  * Outputs.
@@ -283,27 +289,27 @@ output "name" {
   value = "${module.task.name}-${random_string.suffix.result}"
 }
 
-// The DNS name of the ELB
-output "dns" {
-  value = "${module.alb.dns_name}"
-}
+// // The DNS name of the ELB
+// output "dns" {
+//   value = "${module.alb.dns_name}"
+// }
 
-// The id of the ELB
-output "elb" {
-  value = "${module.alb.load_balancer_id}"
-}
+// // The id of the ELB
+// output "elb" {
+//   value = "${module.alb.load_balancer_id}"
+// }
 
-// The zone id of the ELB
-output "zone_id" {
-  value = "${module.alb.load_balancer_zone_id}"
-}
+// // The zone id of the ELB
+// output "zone_id" {
+//   value = "${module.alb.load_balancer_zone_id}"
+// }
 
-// FQDN built using the zone domain and name (external)
-output "external_fqdn" {
-  value = "${aws_route53_record.external.fqdn}"
-}
+// // FQDN built using the zone domain and name (external)
+// output "external_fqdn" {
+//   value = "${aws_route53_record.external.fqdn}"
+// }
 
-// FQDN built using the zone domain and name (internal)
-output "internal_fqdn" {
-  value = "${aws_route53_record.internal.fqdn}"
-}
+// // FQDN built using the zone domain and name (internal)
+// output "internal_fqdn" {
+//   value = "${aws_route53_record.internal.fqdn}"
+// }
