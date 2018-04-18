@@ -208,11 +208,11 @@ EOF
 
 
 module "alb" {
-  source                        = "terraform-aws-modules/alb/aws"
+  source                        = "terraform-aws-modules/alb/aws?ref=v3.2.0"
   load_balancer_name            = "${module.task.name}-${random_string.suffix.result}"
 
-  subnets                   = ["${split(",", var.subnet_ids)}"]
-  security_groups           = ["${split(",",var.security_groups)}"]
+  subnets                       = ["${split(",", var.subnet_ids)}"]
+  security_groups               = ["${split(",",var.security_groups)}"]
 
   // log_enable                    = false
   log_bucket_name               = "${var.log_bucket}"
