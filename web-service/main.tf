@@ -208,7 +208,7 @@ EOF
 
 
 module "alb" {
-  source                        = "terraform-aws-modules/alb/aws?ref=v3.2.0"
+  source                        = "terraform-aws-modules/alb/aws"
   load_balancer_name            = "${module.task.name}-${random_string.suffix.result}"
 
   subnets                       = ["${split(",", var.subnet_ids)}"]
