@@ -6,7 +6,7 @@ ami:
   instance_type: c4.2xlarge
   ssh_username: ubuntu
   ssh_timeout: 10m
-  enhanced_networking: True
+  # enhanced_networking: True
   associate_public_ip_address: True
 
 scripts:
