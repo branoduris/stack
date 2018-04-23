@@ -6,26 +6,27 @@ variable "environment" {
   description = "The name of the environment for this stack"
 }
 
-resource "aws_iam_role" "default_ecs_role" {
-  name = "ecs-role-${var.name}-${var.environment}"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2008-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": [
-          "ecs.amazonaws.com",
-          "ec2.amazonaws.com"
+data "aws_iam_policy_document" "ecs_assume_role_policy" {
+  statement {
+    sid = ""
+    effect = "Allow"
+    actions = [
+      "sts:AssumeRole",
+    ]
+    principals {
+      type = "Service"
+      identifiers = [
+        "ecs.amazonaws.com",
+        "ec2.amazonaws.com",
+        "ecs-tasks.amazonaws.com"
         ]
-      },
-      "Effect": "Allow"
     }
-  ]
+  }
 }
-EOF
+
+resource "aws_iam_role" "default_ecs_role" {
+  name               = "ecs-role-${var.name}-${var.environment}"
+  assume_role_policy = "${data.aws_iam_policy_document.ecs_assume_role_policy.json}"
 }
 
 resource "aws_iam_role_policy" "default_ecs_service_role_policy" {
