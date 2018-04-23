@@ -45,7 +45,8 @@ variable "cluster" {
 
 variable "command" {
   description = "The raw json of the task command"
-  default     = "[]"
+  default     = []
+  type = "list"
 }
 
 variable "env_vars" {
