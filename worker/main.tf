@@ -96,7 +96,6 @@ resource "aws_ecs_service" "main" {
   desired_count                      = "${var.desired_count}"
   deployment_minimum_healthy_percent = "${var.deployment_minimum_healthy_percent}"
   deployment_maximum_percent         = "${var.deployment_maximum_percent}"
-  task_role_arn                      = "${var.role}"
 
   lifecycle {
     create_before_destroy = true
@@ -117,4 +116,5 @@ module "task" {
   env_vars      = "${var.env_vars}"
   memory        = "${var.memory}"
   cpu           = "${var.cpu}"
+  role          = "${var.role}"
 }
