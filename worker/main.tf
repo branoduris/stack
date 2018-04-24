@@ -119,3 +119,8 @@ module "task" {
   cpu           = "${var.cpu}"
   role          = "${var.role}"
 }
+
+
+output "name" {
+  value = "${module.task.name}"
+}
