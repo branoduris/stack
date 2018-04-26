@@ -9,6 +9,7 @@ Restart=on-failure
 RestartSec=10
 RestartPreventExitStatus=5
 SyslogIdentifier=datadog
+EnvironmentFile=-/etc/environment
 ExecStartPre=-/usr/bin/docker kill datadog
 ExecStartPre=-/usr/bin/docker rm datadog
 ExecStartPre=-/usr/bin/docker pull datadog/agent:latest
