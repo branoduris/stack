@@ -1,0 +1,27 @@
+[Unit]
+Description=Segment ECS Logs
+Documentation=https://docs.aws.amazon.com/AmazonECS/latest/developerguide/
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=on-failure
+RestartSec=10
+RestartPreventExitStatus=5
+SyslogIdentifier=datadog
+ExecStartPre=-/usr/bin/docker kill datadog
+ExecStartPre=-/usr/bin/docker rm datadog
+ExecStartPre=-/usr/bin/docker pull datadog/agent:latest
+ExecStart=/usr/bin/docker run \
+    --name=datadog \
+    --restart=on-failure:10 \
+    --volume=/var/run/docker.sock:/var/run/docker.sock:ro \
+    --volume=/proc/:/host/proc/:ro \
+    --volume=/sys/fs/cgroup/:/host/sys/fs/cgroup:ro \
+    --volume=/run/log/journal:/run/log/journal:ro \
+    --env=DD_API_KEY=${DD_API_KEY} \
+    datadog/agent:latest
+ExecStop=-/usr/bin/docker stop datadog
+
+[Install]
+WantedBy=multi-user.target

@@ -126,6 +126,10 @@ variable "extra_cloud_config_content" {
   default     = ""
 }
 
+variable "datadog_api_key" {
+  description = "DataDog API key"
+}
+
 resource "aws_security_group" "cluster" {
   name        = "${var.name}-ecs-cluster"
   vpc_id      = "${var.vpc_id}"
@@ -172,6 +176,7 @@ data "template_file" "ecs_cloud_config" {
     region           = "${var.region}"
     docker_auth_type = "${var.docker_auth_type}"
     docker_auth_data = "${var.docker_auth_data}"
+    datadog_api_key  = "${var.datadog_api_key}"
   }
 }
 

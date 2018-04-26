@@ -147,6 +147,10 @@ variable "logs_expiration_days" {
   default = 30
 }
 
+variable "datadog_api_key" {
+  description = "DataDog API key"
+}
+
 module "defaults" {
   source = "./defaults"
   region = "${var.region}"
@@ -224,6 +228,7 @@ module "ecs_cluster" {
   security_groups        = "${coalesce(var.ecs_security_groups, format("%s,%s,%s", module.security_groups.internal_ssh, module.security_groups.internal_elb, module.security_groups.external_elb))}"
   extra_cloud_config_type     = "${var.extra_cloud_config_type}"
   extra_cloud_config_content  = "${var.extra_cloud_config_content}"
+  datadog_api_key        = "${var.datadog_api_key}"
 }
 
 module "s3_logs" {
