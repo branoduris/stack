@@ -104,7 +104,7 @@ resource "aws_ecs_task_definition" "main" {
     "mountPoints": [],
     "dockerLabels": {
       "app": "${var.name}"
-    }
+    },
     "logConfiguration": {
       "logDriver": "${var.log_driver}",
       "options": {
