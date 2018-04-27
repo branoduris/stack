@@ -107,7 +107,7 @@ resource "aws_ecs_task_definition" "main" {
     "portMappings": ${var.ports},
     "entryPoint": ${var.entry_point},
     "mountPoints": [],
-    "dockerLabels": "${jsonencode(element(var.labels, count.index))}",
+    "dockerLabels": "${jsonencode(map(var.labels))}",
     "logConfiguration": {
       "logDriver": "${var.log_driver}",
       "options": {
