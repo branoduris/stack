@@ -152,12 +152,6 @@ resource "random_string" "suffix" {
   special = false
 }
 
-variable "task_labels" {
-  type    = "map"
-  default = {}
-}
-
-
 
 
 /**
@@ -204,7 +198,6 @@ module "task" {
   env_vars      = "${var.env_vars}"
   memory        = "${var.memory}"
   cpu           = "${var.cpu}"
-  labels        = "${var.task_labels}"
 
   ports = <<EOF
   [

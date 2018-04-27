@@ -64,11 +64,6 @@ variable "memory" {
   default     = 512
 }
 
-variable "labels" {
-  type    = "map"
-  default = {}
-}
-
 variable "log_driver" {
   description = "The log driver to use use for the container"
   default     = "journald"
@@ -107,7 +102,9 @@ resource "aws_ecs_task_definition" "main" {
     "portMappings": ${var.ports},
     "entryPoint": ${var.entry_point},
     "mountPoints": [],
-    "dockerLabels": "${jsonencode(var.labels)}",
+    "dockerLabels": {
+      "app": "${var.name}"
+    }
     "logConfiguration": {
       "logDriver": "${var.log_driver}",
       "options": {
