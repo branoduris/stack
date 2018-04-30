@@ -334,3 +334,7 @@ output "internal_route_tables" {
 output "external_route_tables" {
   value = "${module.vpc.external_rtb_id}"
 }
+
+output "cloudinit_config_rendered" {
+  value = "${module.ecs_cluster.cloudinit_config_rendered}"
+}

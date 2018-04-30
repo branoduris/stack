@@ -1,0 +1,6 @@
+init_config:
+
+instances:
+  - use_mount: no
+    excluded_filesystems:
+      - binfmt_misc

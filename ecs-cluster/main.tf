@@ -393,3 +393,8 @@ output "name" {
 output "security_group_id" {
   value = "${aws_security_group.cluster.id}"
 }
+
+
+output "cloudinit_config_rendered" {
+  value = "${data.template_cloudinit_config.cloud_config.rendered}"
+}
