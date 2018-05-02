@@ -106,7 +106,7 @@ resource "aws_ecs_task_definition" "main" {
     "memory": ${var.memory},
     "name": "${var.name}",
     "portMappings": ${var.ports},
-    "links": ${jsonencode(var.links),
+    "links": ${jsonencode(var.links)},
     "entryPoint": ${var.entry_point},
     "mountPoints": [],
     "dockerLabels": {
