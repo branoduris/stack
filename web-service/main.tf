@@ -120,7 +120,8 @@ variable "env_vars" {
 
 variable "links" {
   description = "The docker container links"
-  default     = "[]"
+  default     = []
+  type        = "list"
 }
 
 variable "desired_count" {
