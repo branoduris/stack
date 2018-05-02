@@ -54,6 +54,11 @@ variable "ports" {
   default     = "[]"
 }
 
+variable "links" {
+  description = "The docker container links"
+  default     = "[]"
+}
+
 variable "image_version" {
   description = "The docker image version"
   default     = "latest"
@@ -100,6 +105,7 @@ resource "aws_ecs_task_definition" "main" {
     "memory": ${var.memory},
     "name": "${var.name}",
     "portMappings": ${var.ports},
+    "links": ${var.links},
     "entryPoint": ${var.entry_point},
     "mountPoints": [],
     "dockerLabels": {

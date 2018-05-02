@@ -118,6 +118,11 @@ variable "env_vars" {
   default     = "[]"
 }
 
+variable "links" {
+  description = "The docker container links"
+  default     = "[]"
+}
+
 variable "desired_count" {
   description = "The desired count"
   default     = 2
@@ -198,6 +203,7 @@ module "task" {
   env_vars      = "${var.env_vars}"
   memory        = "${var.memory}"
   cpu           = "${var.cpu}"
+  links         = "${var.links}"
 
   ports = <<EOF
   [
