@@ -80,6 +80,11 @@ variable "role" {
   default     = ""
 }
 
+variable "labels" {
+  type = "map"
+  default = {}
+}
+
 /**
  * Resources.
  */
@@ -109,9 +114,7 @@ resource "aws_ecs_task_definition" "main" {
     "links": ${jsonencode(var.links)},
     "entryPoint": ${var.entry_point},
     "mountPoints": [],
-    "dockerLabels": {
-      "app": "${var.name}"
-    },
+    "dockerLabels": ${jsonencode(var.labels)},
     "logConfiguration": {
       "logDriver": "${var.log_driver}",
       "options": {

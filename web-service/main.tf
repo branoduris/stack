@@ -158,6 +158,11 @@ resource "random_string" "suffix" {
   special = false
 }
 
+variable "labels" {
+  type = "map"
+  default = {}
+}
+
 
 
 /**
@@ -205,6 +210,7 @@ module "task" {
   memory        = "${var.memory}"
   cpu           = "${var.cpu}"
   links         = "${var.links}"
+  labels        = "${varl.labels}"
 
   ports = <<EOF
   [
