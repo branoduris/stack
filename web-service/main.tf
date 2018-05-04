@@ -210,7 +210,7 @@ module "task" {
   memory        = "${var.memory}"
   cpu           = "${var.cpu}"
   links         = "${var.links}"
-  labels        = "${varl.labels}"
+  labels        = "${var.labels}"
 
   ports = <<EOF
   [
