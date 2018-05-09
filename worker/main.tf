@@ -103,7 +103,7 @@ resource "aws_ecs_service" "main" {
 }
 
 data "aws_ecs_task_definition" "task" {
-  task_definition = "${module.task.name}"
+  task_definition = "${coalesce(var.name, var.image)}"
   // depends_on      = [ "module.task" ]
 }
 
