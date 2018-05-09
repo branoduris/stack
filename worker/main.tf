@@ -104,7 +104,7 @@ resource "aws_ecs_service" "main" {
 
 data "aws_ecs_task_definition" "task" {
   task_definition = "${module.task.name}"
-  // depends_on      = [ "module.task" ]
+  depends_on      = [ "module.task" ]
 }
 
 module "task" {
