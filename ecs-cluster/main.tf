@@ -126,6 +126,11 @@ variable "extra_cloud_config_content" {
   default     = ""
 }
 
+variable "extra_userdata_merge" {
+  default     = "list(append)+dict(recurse_array)+str()"
+  description = "Control how cloud-init merges user-data sections"
+}
+
 variable "datadog_api_key" {
   description = "DataDog API key"
 }
@@ -190,8 +195,10 @@ data "template_cloudinit_config" "cloud_config" {
   }
 
   part {
+    filename     = "extra.sh"
     content_type = "${var.extra_cloud_config_type}"
     content      = "${var.extra_cloud_config_content}"
+    merge_type   = "${var.extra_userdata_merge}"
   }
 }
 
