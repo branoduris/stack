@@ -195,7 +195,7 @@ data "template_cloudinit_config" "cloud_config" {
   }
 
   part {
-    filename     = "extra.sh"
+    // filename     = "extra.sh"
     content_type = "${var.extra_cloud_config_type}"
     content      = "${var.extra_cloud_config_content}"
     merge_type   = "${var.extra_userdata_merge}"
