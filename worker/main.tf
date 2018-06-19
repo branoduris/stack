@@ -79,10 +79,6 @@ variable "deployment_maximum_percent" {
   default     = 200
 }
 
-variable "iam_role" {
-  description = "IAM Role ARN to use"
-}
-
 variable "task_role" {
   description = "Task execution role"
   default     = ""
@@ -100,7 +96,6 @@ resource "aws_ecs_service" "main" {
   desired_count                      = "${var.desired_count}"
   deployment_minimum_healthy_percent = "${var.deployment_minimum_healthy_percent}"
   deployment_maximum_percent         = "${var.deployment_maximum_percent}"
-  iam_role                           = "${var.iam_role}"
 
   lifecycle {
     create_before_destroy = true
