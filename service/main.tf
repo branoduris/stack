@@ -107,6 +107,11 @@ variable "iam_role" {
   description = "IAM Role ARN to use"
 }
 
+variable "task_role" {
+  description = "Task execution role"
+  default     = ""
+}
+
 variable "zone_id" {
   description = "The zone ID to create the record in"
 }
@@ -155,6 +160,7 @@ module "task" {
   env_vars      = "${var.env_vars}"
   memory        = "${var.memory}"
   cpu           = "${var.cpu}"
+  role          = "${var.task_role}"
 
   ports = <<EOF
   [

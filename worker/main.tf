@@ -79,8 +79,12 @@ variable "deployment_maximum_percent" {
   default     = 200
 }
 
-variable "role" {
-  description = "The IAM Role to assign to the Container"
+variable "iam_role" {
+  description = "IAM Role ARN to use"
+}
+
+variable "task_role" {
+  description = "Task execution role"
   default     = ""
 }
 
@@ -96,6 +100,7 @@ resource "aws_ecs_service" "main" {
   desired_count                      = "${var.desired_count}"
   deployment_minimum_healthy_percent = "${var.deployment_minimum_healthy_percent}"
   deployment_maximum_percent         = "${var.deployment_maximum_percent}"
+  iam_role                           = "${var.iam_role}"
 
   lifecycle {
     create_before_destroy = true
@@ -117,7 +122,7 @@ module "task" {
   env_vars      = "${var.env_vars}"
   memory        = "${var.memory}"
   cpu           = "${var.cpu}"
-  role          = "${var.role}"
+  role          = "${var.task_role}"
 }
 
 
