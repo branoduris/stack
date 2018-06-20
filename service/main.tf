@@ -36,8 +36,10 @@ variable "version" {
 }
 
 variable "subnet_ids" {
-  description = "Comma separated list of subnet IDs that will be passed to the ELB module"
+  description = "A list of subnet IDs"
+  type        = "list"
 }
+
 
 variable "security_groups" {
   description = "Comma separated list of security group IDs that will be passed to the ELB module"
@@ -75,7 +77,8 @@ variable "container_port" {
 
 variable "command" {
   description = "The raw json of the task command"
-  default     = "[]"
+  default     = []
+  type = "list"
 }
 
 variable "env_vars" {

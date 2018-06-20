@@ -9,7 +9,8 @@ variable "name" {
 }
 
 variable "subnet_ids" {
-  description = "Comma separated list of subnet IDs"
+  description = "A list of subnet IDs"
+  type        = "list"
 }
 
 variable "environment" {
@@ -53,7 +54,7 @@ resource "aws_elb" "main" {
 
   internal                  = true
   cross_zone_load_balancing = true
-  subnets                   = ["${split(",", var.subnet_ids)}"]
+  subnets                   = ["${var.subnet_ids}"]
   security_groups           = ["${split(",",var.security_groups)}"]
 
   idle_timeout                = 30
@@ -75,9 +76,9 @@ resource "aws_elb" "main" {
     interval            = 30
   }
 
-  access_logs {
-    bucket = "${var.log_bucket}"
-  }
+  // access_logs {
+  //   bucket = "${var.log_bucket}"
+  // }
 
   tags {
     Name        = "${var.name}-balancer"
