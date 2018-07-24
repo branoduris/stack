@@ -18,7 +18,9 @@ data "aws_iam_policy_document" "ecs_assume_role_policy" {
       identifiers = [
         "ecs.amazonaws.com",
         "ec2.amazonaws.com",
-        "ecs-tasks.amazonaws.com"
+        "ecs-tasks.amazonaws.com",
+        "events.amazonaws.com",
+        "lambda.amazonaws.com"
         ]
     }
   }
@@ -78,6 +80,8 @@ resource "aws_iam_role_policy" "default_ecs_instance_role_policy" {
         "ecr:GetDownloadUrlForLayer",
         "ecr:BatchGetImage",
         "ecs:StartTask",
+        "ecs:RunTask",
+        "ecs:StopTask",
         "autoscaling:*"
       ],
       "Resource": "*"
